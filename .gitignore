@@ -1,0 +1,6 @@
+/vendor/
+/.vscode/
+data.json
+output.txt
+localhostConnection.session.sql
+scandiwebRemote.session.sql

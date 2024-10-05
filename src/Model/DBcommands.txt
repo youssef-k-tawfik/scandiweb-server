@@ -1,0 +1,650 @@
+CREATE TABLE categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE brands (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE products (
+    pid INT AUTO_INCREMENT PRIMARY KEY,
+    id VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
+    in_stock BOOLEAN NOT NULL,
+    description TEXT,
+    category_id INT,
+    brand_id INT,
+    FOREIGN KEY (category_id) REFERENCES categories(id),
+    FOREIGN KEY (brand_id) REFERENCES brands(id)
+);
+
+CREATE TABLE galleries (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    image VARCHAR(255) NOT NULL,
+    product_id INT,
+    FOREIGN KEY (product_id) REFERENCES products(pid)
+);
+
+CREATE TABLE currencies (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    symbol VARCHAR(10) NOT NULL,
+    label VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE prices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    price DECIMAL(10, 2) NOT NULL,
+    currency_id INT,
+    product_id INT,
+    FOREIGN KEY (currency_id) REFERENCES currencies(id),
+    FOREIGN KEY (product_id) REFERENCES products(pid)
+);
+
+CREATE TABLE attribute_sets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    attribute_set_id VARCHAR(255)
+);
+
+CREATE TABLE attribute_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    value VARCHAR(255) NOT NULL,
+    display_value VARCHAR(255) NOT NULL,
+    attribute_item_id varchar(255) NOT NULL,
+    attribute_set_id INT,
+    FOREIGN KEY (attribute_set_id) REFERENCES attribute_sets(id)
+);
+
+CREATE TABLE product_attributes (
+    product_id INT,
+    attribute_item_id INT,
+    FOREIGN KEY (product_id) REFERENCES products(pid),
+    FOREIGN KEY (attribute_item_id) REFERENCES attribute_items(id),
+    PRIMARY KEY (product_id, attribute_item_id)
+);
+
+CREATE TABLE orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_number VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE order_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT,
+    product_id INT,
+    quantity INT NOT NULL CHECK (quantity > 0),
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (product_id) REFERENCES products(pid)
+);
+
+CREATE TABLE order_item_attributes (
+    order_item_id INT,
+    attribute_item_id INT,
+    FOREIGN KEY (order_item_id) REFERENCES order_items(id),
+    FOREIGN KEY (attribute_item_id) REFERENCES attribute_items(id),
+    PRIMARY KEY (order_item_id, attribute_item_id)
+);
+
+INSERT INTO categories (name) VALUES ('all'), ('clothes'), ('tech');
+
+INSERT INTO brands (name) VALUES ('Nike x Stussy'), ('Canada Goose'),('Microsoft'), ('Sony'), ('Apple');
+
+INSERT INTO currencies (symbol, label) VALUES ('$','USD');
+
+INSERT INTO products (id, name, in_stock, description, category_id, brand_id) VALUES
+(
+    'huarache-x-stussy-le',
+    'Nike Air Huarache Le',
+    TRUE,
+    'Great sneakers for everyday use!',
+    (select id from categories where name = 'clothes'),
+    (select id from brands where name = 'Nike x Stussy')
+),
+(
+    'jacket-canada-goosee',
+    'Jacket',
+    TRUE,
+    'Awesome winter jacket',
+    (select id from categories where name = 'clothes'),
+    (select id from brands where name = 'Canada Goose')
+),
+(
+    'ps-5',
+    'PlayStation 5',
+    TRUE,
+    'A good gaming console. Plays games of PS4! Enjoy if you can buy it mwahahahaha',
+    (select id from categories where name = 'tech'),
+    (select id from brands where name = 'Sony')
+),
+(
+    'xbox-series-s',
+    'Xbox Series S 512GB',
+    FALSE,
+    '\n<div>\n    <ul>\n        <li><span>Hardware-beschleunigtes Raytracing macht dein Spiel noch realistischer</span></li>\n        <li><span>Spiele Games mit bis zu 120 Bilder pro Sekunde</span></li>\n        <li><span>Minimiere Ladezeiten mit einer speziell entwickelten 512GB NVMe SSD und wechsle mit Quick Resume nahtlos zwischen mehreren Spielen.</span></li>\n        <li><span>Xbox Smart Delivery stellt sicher, dass du die beste Version deines Spiels spielst, egal, auf welcher Konsole du spielst</span></li>\n        <li><span>Spiele deine Xbox One-Spiele auf deiner Xbox Series S weiter. Deine Fortschritte, Erfolge und Freundesliste werden automatisch auf das neue System übertragen.</span></li>\n        <li><span>Erwecke deine Spiele und Filme mit innovativem 3D Raumklang zum Leben</span></li>\n        <li><span>Der brandneue Xbox Wireless Controller zeichnet sich durch höchste Präzision, eine neue Share-Taste und verbesserte Ergonomie aus</span></li>\n        <li><span>Ultra-niedrige Latenz verbessert die Reaktionszeit von Controller zum Fernseher</span></li>\n        <li><span>Verwende dein Xbox One-Gaming-Zubehör -einschließlich Controller, Headsets und mehr</span></li>\n        <li><span>Erweitere deinen Speicher mit der Seagate 1 TB-Erweiterungskarte für Xbox Series X (separat erhältlich) und streame 4K-Videos von Disney+, Netflix, Amazon, Microsoft Movies &amp; TV und mehr</span></li>\n    </ul>\n</div>',
+    (select id from categories where name = 'tech'),
+    (select id from brands where name = 'Microsoft')
+),
+(
+    'apple-imac-2021',
+    'iMac 2021',
+    TRUE,
+    'The new iMac!',
+    (select id from categories where name = 'tech'),
+    (select id from brands where name = 'Apple')
+),
+(
+    'apple-iphone-12-pro',
+    'iPhone 12 Pro',
+    TRUE,
+    'This is iPhone 12. Nothing else to say.',
+    (select id from categories where name = 'tech'),
+    (select id from brands where name = 'Apple')
+),
+(
+    'apple-airpods-pro',
+    'AirPods Pro',
+    FALSE,
+    '\n<h3>Magic like you’ve never heard</h3>\n<p>AirPods Pro have been designed to deliver Active Noise Cancellation for immersive sound, Transparency mode so you can hear your surroundings, and a customizable fit for all-day comfort. Just like AirPods, AirPods Pro connect magically to your iPhone or Apple Watch. And they’re ready to use right out of the case.\n\n<h3>Active Noise Cancellation</h3>\n<p>Incredibly light noise-cancelling headphones, AirPods Pro block out your environment so you can focus on what you’re listening to. AirPods Pro use two microphones, an outward-facing microphone and an inward-facing microphone, to create superior noise cancellation. By continuously adapting to the geometry of your ear and the fit of the ear tips, Active Noise Cancellation silences the world to keep you fully tuned in to your music, podcasts, and calls.\n\n<h3>Transparency mode</h3>\n<p>Switch to Transparency mode and AirPods Pro let the outside sound in, allowing you to hear and connect to your surroundings. Outward- and inward-facing microphones enable AirPods Pro to undo the sound-isolating effect of the silicone tips so things sound and feel natural, like when you’re talking to people around you.</p>\n\n<h3>All-new design</h3>\n<p>AirPods Pro offer a more customizable fit with three sizes of flexible silicone tips to choose from. With an internal taper, they conform to the shape of your ear, securing your AirPods Pro in place and creating an exceptional seal for superior noise cancellation.</p>\n\n<h3>Amazing audio quality</h3>\n<p>A custom-built high-excursion, low-distortion driver delivers powerful bass. A superefficient high dynamic range amplifier produces pure, incredibly clear sound while also extending battery life. And Adaptive EQ automatically tunes music to suit the shape of your ear for a rich, consistent listening experience.</p>\n\n<h3>Even more magical</h3>\n<p>The Apple-designed H1 chip delivers incredibly low audio latency. A force sensor on the stem makes it easy to control music and calls and switch between Active Noise Cancellation and Transparency mode. Announce Messages with Siri gives you the option to have Siri read your messages through your AirPods. And with Audio Sharing, you and a friend can share the same audio stream on two sets of AirPods — so you can play a game, watch a movie, or listen to a song together.</p>\n',
+    (select id from categories where name = 'tech'),
+    (select id from brands where name = 'Apple')
+),
+(
+    'apple-airtag',
+    'AirTag',
+    TRUE,
+    '\n<h1>Lose your knack for losing things.</h1>\n<p>AirTag is an easy way to keep track of your stuff. Attach one to your keys, slip another one in your backpack. And just like that, they’re on your radar in the Find My app. AirTag has your back.</p>\n',
+    (select id from categories where name = 'tech'),
+    (select id from brands where name = 'Apple')
+);
+
+
+INSERT INTO galleries (image, product_id) VALUES
+(
+    'https://cdn.shopify.com/s/files/1/0087/6193/3920/products/DD1381200_DEOA_2_720x.jpg?v=1612816087',
+    (SELECT pid FROM products WHERE id = 'huarache-x-stussy-le')
+),
+(
+    'https://cdn.shopify.com/s/files/1/0087/6193/3920/products/DD1381200_DEOA_1_720x.jpg?v=1612816087',
+    (SELECT pid FROM products WHERE id = 'huarache-x-stussy-le')
+),
+(
+    'https://cdn.shopify.com/s/files/1/0087/6193/3920/products/DD1381200_DEOA_3_720x.jpg?v=1612816087',
+    (SELECT pid FROM products WHERE id = 'huarache-x-stussy-le')
+),
+(
+    'https://cdn.shopify.com/s/files/1/0087/6193/3920/products/DD1381200_DEOA_5_720x.jpg?v=1612816087',
+    (SELECT pid FROM products WHERE id = 'huarache-x-stussy-le')
+),
+(
+    'https://cdn.shopify.com/s/files/1/0087/6193/3920/products/DD1381200_DEOA_4_720x.jpg?v=1612816087',
+    (SELECT pid FROM products WHERE id = 'huarache-x-stussy-le')
+),
+(
+    'https://images.canadagoose.com/image/upload/w_480,c_scale,f_auto,q_auto:best/v1576016105/product-image/2409L_61.jpg',
+    (SELECT pid FROM products WHERE id = 'jacket-canada-goosee')
+),
+(
+    'https://images.canadagoose.com/image/upload/w_480,c_scale,f_auto,q_auto:best/v1576016107/product-image/2409L_61_a.jpg',
+    (SELECT pid FROM products WHERE id = 'jacket-canada-goosee')
+),
+(
+    'https://images.canadagoose.com/image/upload/w_480,c_scale,f_auto,q_auto:best/v1576016108/product-image/2409L_61_b.jpg',
+    (SELECT pid FROM products WHERE id = 'jacket-canada-goosee')
+),
+(
+    'https://images.canadagoose.com/image/upload/w_1333,c_scale,f_auto,q_auto:best/v1634058159/product-image/2409L_61_p.png',
+    (SELECT pid FROM products WHERE id = 'jacket-canada-goosee')
+),
+(
+    'https://images.canadagoose.com/image/upload/w_1333,c_scale,f_auto,q_auto:best/v1634058169/product-image/2409L_61_o.png',
+    (SELECT pid FROM products WHERE id = 'jacket-canada-goosee')
+),
+(
+    'https://images.canadagoose.com/image/upload/w_480,c_scale,f_auto,q_auto:best/v1576016110/product-image/2409L_61_d.jpg',
+    (SELECT pid FROM products WHERE id = 'jacket-canada-goosee')
+),
+(
+    'https://images.canadagoose.com/image/upload/w_480,c_scale,f_auto,q_auto:best/v1576016109/product-image/2409L_61_c.jpg',
+    (SELECT pid FROM products WHERE id = 'jacket-canada-goosee')
+),
+(
+    'https://images-na.ssl-images-amazon.com/images/I/510VSJ9mWDL._SL1262_.jpg',
+    (SELECT pid FROM products WHERE id = 'ps-5')
+),
+(
+    'https://images-na.ssl-images-amazon.com/images/I/610%2B69ZsKCL._SL1500_.jpg',
+    (SELECT pid FROM products WHERE id = 'ps-5')
+),
+(
+    'https://images-na.ssl-images-amazon.com/images/I/51iPoFwQT3L._SL1230_.jpg',
+    (SELECT pid FROM products WHERE id = 'ps-5')
+),
+(
+    'https://images-na.ssl-images-amazon.com/images/I/61qbqFcvoNL._SL1500_.jpg',
+    (SELECT pid FROM products WHERE id = 'ps-5')
+),
+(
+    'https://images-na.ssl-images-amazon.com/images/I/51HCjA3rqYL._SL1230_.jpg',
+    (SELECT pid FROM products WHERE id = 'ps-5')
+),
+(
+    'https://images-na.ssl-images-amazon.com/images/I/71vPCX0bS-L._SL1500_.jpg',
+    (SELECT pid FROM products WHERE id = 'xbox-series-s')
+),
+(
+    'https://images-na.ssl-images-amazon.com/images/I/61RnXmpAmIL._SL1500_.jpg',
+    (SELECT pid FROM products WHERE id = 'xbox-series-s')
+),
+(
+    'https://images-na.ssl-images-amazon.com/images/I/61IYrCrBzxL._SL1500_.jpg',
+    (SELECT pid FROM products WHERE id = 'xbox-series-s')
+),
+(
+    'https://images-na.ssl-images-amazon.com/images/I/71iQ4HGHtsL._SL1500_.jpg',
+    (SELECT pid FROM products WHERE id = 'xbox-series-s')
+),
+(
+    'https://images-na.ssl-images-amazon.com/images/I/71q7JTbRTpL._SL1500_.jpg',
+    (SELECT pid FROM products WHERE id = 'xbox-series-s')
+),
+(
+    'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/imac-24-blue-selection-hero-202104?wid=904&hei=840&fmt=jpeg&qlt=80&.v=1617492405000',
+    (SELECT pid FROM products WHERE id = 'apple-imac-2021')
+),
+(
+    'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-12-pro-family-hero?wid=940&amp;hei=1112&amp;fmt=jpeg&amp;qlt=80&amp;.v=1604021663000',
+    (SELECT pid FROM products WHERE id = 'apple-iphone-12-pro')
+),
+(
+    'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MWP22?wid=572&hei=572&fmt=jpeg&qlt=95&.v=1591634795000',
+    (SELECT pid FROM products WHERE id = 'apple-airpods-pro')
+),
+(
+    'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/airtag-double-select-202104?wid=445&hei=370&fmt=jpeg&qlt=95&.v=1617761672000',
+    (SELECT pid FROM products WHERE id = 'apple-airtag')
+);
+
+
+INSERT INTO prices (price, currency_id, product_id) VALUES 
+(
+    144.69,
+    (select id from currencies where label = 'USD'),
+    (select pid from products where id = 'huarache-x-stussy-le')
+),
+(
+    518.47,
+    (select id from currencies where label = 'USD'),
+    (select pid from products where id = 'jacket-canada-goosee')
+),
+(
+    844.02,
+    (select id from currencies where label = 'USD'),
+    (select pid from products where id = 'ps-5')
+),
+(
+    333.99,
+    (select id from currencies where label = 'USD'),
+    (select pid from products where id = 'xbox-series-s')
+),
+(
+    1688.03,
+    (select id from currencies where label = 'USD'),
+    (select pid from products where id = 'apple-imac-2021')
+),
+(
+    1000.76,
+    (select id from currencies where label = 'USD'),
+    (select pid from products where id = 'apple-iphone-12-pro')
+),
+(
+    300.23,
+    (select id from currencies where label = 'USD'),
+    (select pid from products where id = 'apple-airpods-pro')
+),
+(
+    120.57,
+    (select id from currencies where label = 'USD'),
+    (select pid from products where id = 'apple-airtag')
+)
+;
+
+
+INSERT INTO attribute_sets (name, type, attribute_set_id) VALUES 
+(
+    'Size',
+    'text',
+    'Size'
+),
+(
+    'Touch ID in keyboard',
+    'text',
+    'Touch ID in keyboard'
+),
+(
+    'USB 3 ports',
+    'text',
+    'USB 3 ports'
+),
+(
+    'Capacity',
+    'text',
+    'Capacity'
+),
+(
+    'Color',
+    'swatch',
+    'Color'
+)
+;
+
+
+INSERT INTO attribute_items (value, display_value, attribute_set_id, attribute_item_id) VALUES 
+(
+    '40',
+    '40',
+    (select id from attribute_sets where name = 'Size'),
+    '40'
+),
+(
+    '41',
+    '41',
+    (select id from attribute_sets where name = 'Size'),
+    '41'
+),
+(
+    '42',
+    '42',
+    (select id from attribute_sets where name = 'Size'),
+    '42'
+),
+(
+    '43',
+    '43',
+    (select id from attribute_sets where name = 'Size'),
+    '43'
+),
+(
+    'S',
+    'Small',
+    (select id from attribute_sets where name = 'Size'),
+    'Small'
+),
+(
+    'M',
+    'Medium',
+    (select id from attribute_sets where name = 'Size'),
+    'Medium'
+),
+(
+    'L',
+    'Large',
+    (select id from attribute_sets where name = 'Size'),
+    'Large'
+),
+(
+    'XL',
+    'Extra Large',
+    (select id from attribute_sets where name = 'Size'),
+    'Extra Large'
+),
+(
+    'Yes',
+    'Yes',
+    (select id from attribute_sets where name = 'Touch ID in keyboard'),
+    'Yes'
+),
+(
+    'No',
+    'No',
+    (select id from attribute_sets where name = 'Touch ID in keyboard'),
+    'No'
+),
+(
+    'Yes',
+    'Yes',
+    (select id from attribute_sets where name = 'USB 3 ports'),
+    'Yes'
+),
+(
+    'No',
+    'No',
+    (select id from attribute_sets where name = 'USB 3 ports'),
+    'No'
+),
+(
+    '256G',
+    '256G',
+    (select id from attribute_sets where name = 'Capacity'),
+    '256G'
+),
+(
+    '512G',
+    '512G',
+    (select id from attribute_sets where name = 'Capacity'),
+    '512G'
+),
+(
+    '1T',
+    '1T',
+    (select id from attribute_sets where name = 'Capacity'),
+    '1T'
+),
+(
+    '#44FF03',
+    'Green',
+    (select id from attribute_sets where name = 'Color'),
+    'Green'
+),
+(
+    '#03FFF7',
+    'Cyan',
+    (select id from attribute_sets where name = 'Color'),
+    'Cyan'
+),
+(
+    '#030BFF',
+    'Blue',
+    (select id from attribute_sets where name = 'Color'),
+    'Blue'
+),
+(
+    '#000000',
+    'Black',
+    (select id from attribute_sets where name = 'Color'),
+    'Black'
+),
+(
+    '#FFFFFF',
+    'White',
+    (select id from attribute_sets where name = 'Color'),
+    'White'
+)
+;
+
+
+INSERT INTO product_attributes (product_id, attribute_item_id) VALUES 
+(
+    (select pid from products where id = 'huarache-x-stussy-le'),
+    (select id from attribute_items where display_value = '40')
+),
+(
+    (select pid from products where id = 'huarache-x-stussy-le'),
+    (select id from attribute_items where display_value = '41')
+),
+(
+    (select pid from products where id = 'huarache-x-stussy-le'),
+    (select id from attribute_items where display_value = '42')
+),
+(
+    (select pid from products where id = 'huarache-x-stussy-le'),
+    (select id from attribute_items where display_value = '43')
+),
+(
+    (select pid from products where id = 'jacket-canada-goosee'),
+    (select id from attribute_items where display_value = 'Small')
+),
+(
+    (select pid from products where id = 'jacket-canada-goosee'),
+    (select id from attribute_items where display_value = 'Medium')
+),
+(
+    (select pid from products where id = 'jacket-canada-goosee'),
+    (select id from attribute_items where display_value = 'Large')
+),
+(
+    (select pid from products where id = 'jacket-canada-goosee'),
+    (select id from attribute_items where display_value = 'Extra Large')
+),
+(
+    (select pid from products where id = 'ps-5'),
+    (select id from attribute_items where display_value = 'Green')
+),
+(
+    (select pid from products where id = 'ps-5'),
+    (select id from attribute_items where display_value = 'Cyan')
+),
+(
+    (select pid from products where id = 'ps-5'),
+    (select id from attribute_items where display_value = 'Blue')
+),
+(
+    (select pid from products where id = 'ps-5'),
+    (select id from attribute_items where display_value = 'Black')
+),
+(
+    (select pid from products where id = 'ps-5'),
+    (select id from attribute_items where display_value = 'White')
+),
+(
+    (select pid from products where id = 'ps-5'),
+    (select id from attribute_items where display_value = '512G')
+),
+(
+    (select pid from products where id = 'ps-5'),
+    (select id from attribute_items where display_value = '1T')
+),
+(
+    (select pid from products where id = 'xbox-series-s'),
+    (select id from attribute_items where display_value = 'Green')
+),
+(
+    (select pid from products where id = 'xbox-series-s'),
+    (select id from attribute_items where display_value = 'Cyan')
+),
+(
+    (select pid from products where id = 'xbox-series-s'),
+    (select id from attribute_items where display_value = 'Blue')
+),
+(
+    (select pid from products where id = 'xbox-series-s'),
+    (select id from attribute_items where display_value = 'Black')
+),
+(
+    (select pid from products where id = 'xbox-series-s'),
+    (select id from attribute_items where display_value = 'White')
+),
+(
+    (select pid from products where id = 'xbox-series-s'),
+    (select id from attribute_items where display_value = '512G')
+),
+(
+    (select pid from products where id = 'xbox-series-s'),
+    (select id from attribute_items where display_value = '1T')
+),
+(
+    (select pid from products where id = 'apple-imac-2021'),
+    (select id from attribute_items where display_value = '256G')
+),
+(
+    (select pid from products where id = 'apple-imac-2021'),
+    (select id from attribute_items where display_value = '512G')
+),
+(
+    (select pid from products where id = 'apple-imac-2021'),
+    (
+        SELECT attribute_items.id
+        FROM attribute_items
+        JOIN attribute_sets 
+        ON attribute_items.attribute_set_id = attribute_sets.id
+        WHERE attribute_items.display_value = 'Yes'
+        AND attribute_sets.name = 'Touch ID in keyboard'
+    )
+),
+(
+    (select pid from products where id = 'apple-imac-2021'),
+    (
+        SELECT attribute_items.id
+        FROM attribute_items
+        JOIN attribute_sets 
+        ON attribute_items.attribute_set_id = attribute_sets.id
+        WHERE attribute_items.display_value = 'No'
+        AND attribute_sets.name = 'Touch ID in keyboard'
+    )
+),
+(
+    (select pid from products where id = 'apple-imac-2021'),
+    (
+        SELECT attribute_items.id
+        FROM attribute_items
+        JOIN attribute_sets 
+        ON attribute_items.attribute_set_id = attribute_sets.id
+        WHERE attribute_items.display_value = 'Yes'
+        AND attribute_sets.name = 'USB 3 ports'
+    )
+),
+(
+    (select pid from products where id = 'apple-imac-2021'),
+    (
+        SELECT attribute_items.id
+        FROM attribute_items
+        JOIN attribute_sets 
+        ON attribute_items.attribute_set_id = attribute_sets.id
+        WHERE attribute_items.display_value = 'No'
+        AND attribute_sets.name = 'USB 3 ports'
+    )
+),
+(
+    (select pid from products where id = 'apple-iphone-12-pro'),
+    (select id from attribute_items where display_value = 'Green')
+),
+(
+    (select pid from products where id = 'apple-iphone-12-pro'),
+    (select id from attribute_items where display_value = 'Cyan')
+),
+(
+    (select pid from products where id = 'apple-iphone-12-pro'),
+    (select id from attribute_items where display_value = 'Blue')
+),
+(
+    (select pid from products where id = 'apple-iphone-12-pro'),
+    (select id from attribute_items where display_value = 'Black')
+),
+(
+    (select pid from products where id = 'apple-iphone-12-pro'),
+    (select id from attribute_items where display_value = 'White')
+),
+(
+    (select pid from products where id = 'apple-iphone-12-pro'),
+    (select id from attribute_items where display_value = '512G')
+),
+(
+    (select pid from products where id = 'apple-iphone-12-pro'),
+    (select id from attribute_items where display_value = '1T')
+)
+;
+
+
+CREATE INDEX idx_products_category_id ON products(category_id);
+CREATE INDEX idx_products_brand_id ON products(brand_id);
+CREATE INDEX idx_categories_id_name ON categories(id, name);
+CREATE INDEX idx_brands_id_name ON brands(id, name);
+CREATE INDEX idx_galleries_product_id ON galleries(product_id);
+CREATE INDEX idx_prices_product_id ON prices(product_id);
+CREATE INDEX idx_prices_currency_id ON prices(currency_id);
+CREATE INDEX idx_currencies_id_label_symbol ON currencies(id, label, symbol);
+CREATE INDEX idx_product_attributes_product_attribute ON product_attributes(product_id, attribute_item_id);
+CREATE INDEX idx_attribute_items_id_value_display ON attribute_items(id, value, display_value);
+CREATE INDEX idx_attribute_sets_id_name_type ON attribute_sets(id, name, type);
