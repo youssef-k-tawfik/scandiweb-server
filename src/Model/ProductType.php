@@ -10,10 +10,6 @@
 
 namespace App\Model;
 
-use App\Controller\ProductsResolver;
-
-require 'AttributeSetType.php';
-
 interface Product
 {
     public static function getAllProducts();
@@ -57,8 +53,7 @@ abstract class ProductType implements Product
     public function getPrices($prices): array
     {
         if (empty($prices)) {
-            error_log("No prices found!");
-            return ["No prices found!"];
+            throw new \InvalidArgumentException("No prices found!");
         }
 
         $finalPrices = array_map(function ($price) {
@@ -66,31 +61,5 @@ abstract class ProductType implements Product
         }, $prices);
 
         return $finalPrices;
-    }
-}
-
-class ClothesProduct extends ProductType
-{
-    public static function getCategory(): string
-    {
-        return "clothes";
-    }
-
-    public static function getAllProducts(): array
-    {
-        return ProductsResolver::getAllProducts(self::getCategory());
-    }
-}
-
-class TechProduct extends ProductType
-{
-    public static function getCategory(): string
-    {
-        return "tech";
-    }
-
-    public static function getAllProducts(): array
-    {
-        return ProductsResolver::getAllProducts(self::getCategory());
     }
 }

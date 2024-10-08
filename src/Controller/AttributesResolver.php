@@ -30,6 +30,9 @@ class AttributesResolver
 
     public static function getAttributes($product): array
     {
+
+        // error_log("Resolving attributes for product: " . print_r($product->attributes, true));
+
         // self::$instanceCount++;
         $attributes = $product->attributes ?? [];
 

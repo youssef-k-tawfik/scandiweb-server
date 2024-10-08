@@ -12,7 +12,7 @@ namespace App\Model;
 abstract class AttributeSetType
 {
     public string $id;
-    public array $items;
+    public array  $items;
     public string $type;
 
     public function __construct($attributeSet)
@@ -59,46 +59,5 @@ abstract class AttributeSetType
             $item["value"],
             $item["id"]
         );
-    }
-}
-
-class SizeAttributeSet extends AttributeSetType
-{
-    public function getAttributeSetType()
-    {
-        return "Size";
-    }
-}
-
-class ColorAttributeSet extends AttributeSetType
-{
-    public function getAttributeSetType()
-    {
-        return "Color";
-    }
-}
-
-class CapacityAttributeSet extends AttributeSetType
-{
-    public function getAttributeSetType()
-    {
-
-        return "Capacity";
-    }
-}
-
-class USB3PortsAttributeSet extends AttributeSetType
-{
-    public function getAttributeSetType()
-    {
-        return "USB 3 ports";
-    }
-}
-
-class TouchIDInKeyboardAttributeSet extends AttributeSetType
-{
-    public function getAttributeSetType()
-    {
-        return "Touch ID in keyboard";
     }
 }

@@ -9,8 +9,6 @@
 
 namespace App\Controller;
 
-require_once __DIR__ . '/../Model/ProductType.php';
-
 use GraphQL\GraphQL as GraphQLBase;
 use RuntimeException;
 use Throwable;
