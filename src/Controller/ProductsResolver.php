@@ -9,19 +9,14 @@
 
 namespace App\Controller;
 
+use App\Model\Products\ProductFactory;
 use App\Model\Products\ProductType;
-use App\Model\Products\ClothesProduct;
-use App\Model\Products\TechProduct;
 use App\Model\Database;
 
 use Exception;
 
 class ProductsResolver
 {
-    private static $productMap = [
-        'clothes' => ClothesProduct::class,
-        'tech' => TechProduct::class,
-    ];
 
     public static function getAllProducts(string $category = null): array
     {
@@ -35,8 +30,11 @@ class ProductsResolver
             $results = $db->query();
             error_log("Got the results!");
             $productsData = self::prepareProductsList($results);
+            $factory = new ProductFactory();
             $allProducts = array_map(
-                [self::class, 'createProduct'],
+                function ($product) use ($factory) {
+                    return $factory->createProduct($product);
+                },
                 $productsData
             );
 
@@ -63,7 +61,8 @@ class ProductsResolver
             }
 
             $productData = self::prepareProductsList($results);
-            $product = self::createProduct($productData[$id]);
+            $factory = new ProductFactory();
+            $product = $factory->createProduct($productData[$id]);
             // error_log("desc " . $product->description);
             return $product;
         } catch (Exception $e) {
@@ -153,35 +152,5 @@ class ProductsResolver
         }
 
         return $productsData;
-    }
-
-    /**
-     * Creates a product object from the provided product data.
-     *
-     * @param array $product The product data.
-     * @return ProductType The created product object.
-     * @throws Exception If the product category is unknown.
-     */
-    public static function createProduct(array $product): ProductType
-    {
-        if (!isset(self::$productMap[$product['category']])) {
-            throw new Exception("Unknown product category: " . $product['category']);
-        }
-
-        $productClass = self::$productMap[$product['category']];
-        $product['description'] = htmlspecialchars_decode($product['description']);
-
-        $productObject = new $productClass(
-            $product['id'],
-            $product['name'],
-            $product['description'],
-            $product['brand'],
-            $product['inStock'],
-            $product['gallery'],
-            $product['prices'],
-            $product['attributes']
-        );
-
-        return $productObject;
     }
 }
