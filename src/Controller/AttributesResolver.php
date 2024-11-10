@@ -9,57 +9,26 @@
 
 namespace App\Controller;
 
-use App\Model\Attributes\SizeAttributeSet;
-use App\Model\Attributes\ColorAttributeSet;
-use App\Model\Attributes\CapacityAttributeSet;
-use App\Model\Attributes\USB3PortsAttributeSet;
-use App\Model\Attributes\TouchIDInKeyboardAttributeSet;
+use App\Model\Attributes\AttributeFactory;
 use Exception;
 
 class AttributesResolver
 {
-    // private static $instanceCount = 0;
-
-    public static $attributeSetMap = [
-        'Size' => SizeAttributeSet::class,
-        'Color' => ColorAttributeSet::class,
-        'Capacity' => CapacityAttributeSet::class,
-        'USB 3 ports' => USB3PortsAttributeSet::class,
-        'Touch ID in keyboard' => TouchIDInKeyboardAttributeSet::class,
-    ];
 
     public static function getAttributes($product): array
     {
-
-        // error_log("Resolving attributes for product: " . print_r($product->attributes, true));
-
-        // self::$instanceCount++;
         $attributes = $product->attributes ?? [];
 
         if (empty($attributes)) {
             return [];
         }
 
-        $attributeSetMap = self::$attributeSetMap;
+        $attributeFactory = new AttributeFactory();
 
-        $finalAttributeSet = array_map(function ($attributeSet) use ($attributeSetMap) {
+        $finalAttributeSet = array_map(function ($attributeSet) use ($attributeFactory) {
             $type = $attributeSet['id'];
-            if (!isset($attributeSetMap[$type])) {
-                throw new Exception("Unknown Attribute Set type: " . $type);
-            }
-
-            $attributeSetClass = $attributeSetMap[$type];
-
-            try {
-                return new $attributeSetClass($attributeSet);
-            } catch (Exception $e) {
-                error_log("Error instantiating $attributeSetClass: " . $e->getMessage());
-                throw $e;
-            }
+            return $attributeFactory->createAttributeSet($type, $attributeSet);
         }, $attributes);
-
-        // error_log("All attributes resolved!");
-        // error_log("Attributes retrieved successfully No. " . self::$instanceCount);
 
         return $finalAttributeSet;
     }

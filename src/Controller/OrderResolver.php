@@ -18,7 +18,7 @@ class OrderResolver
 {
     public static function placeOrder($root, $args)
     {
-        error_log("Placing order: " . json_encode($args));
+        // error_log("Placing order: " . json_encode($args));
 
         // * Create a new PDO instance
         $pdo = new PDO(
