@@ -17,8 +17,8 @@ use App\Controller\ProductsResolver;
 
 // * Models
 use App\Model\Category;
-use App\Model\ClothesProduct;
-use App\Model\TechProduct;
+use App\Model\Products\ClothesProduct;
+use App\Model\Products\TechProduct;
 
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;

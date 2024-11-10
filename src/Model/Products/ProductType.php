@@ -5,10 +5,12 @@
  * It uses the Price class to represent the prices of the product.
  * It implements the Product interface to enforce the implementation of the getAllProducts method.
  * 
- * @package App\Model
+ * @package App\Model\Products
  */
 
-namespace App\Model;
+namespace App\Model\Products;
+
+use App\Model\Price;
 
 interface Product
 {

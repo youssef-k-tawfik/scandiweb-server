@@ -3,10 +3,10 @@
 /**
  * This class represents the color attribute set.
  * 
- * @package App\Model
+ * @package App\Model\Attributes
  */
 
-namespace App\Model;
+namespace App\Model\Attributes;
 
 class ColorAttributeSet extends AttributeSetType
 {

@@ -3,10 +3,10 @@
 /**
  * This class represents the capacity attribute set.
  * 
- * @package App\Model
+ * @package App\Model\Attributes
  */
 
-namespace App\Model;
+namespace App\Model\Attributes;
 
 class CapacityAttributeSet extends AttributeSetType
 {

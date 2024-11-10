@@ -4,10 +4,10 @@
  * This abstract class represents the attribute set model.
  * It uses Attribute class to represent the attributes of the attribute set.
  * 
- * @package App\Model
+ * @package App\Model\Attributes
  */
 
-namespace App\Model;
+namespace App\Model\Attributes;
 
 abstract class AttributeSetType
 {

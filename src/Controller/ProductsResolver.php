@@ -9,9 +9,9 @@
 
 namespace App\Controller;
 
-use App\Model\ProductType;
-use App\Model\ClothesProduct;
-use App\Model\TechProduct;
+use App\Model\Products\ProductType;
+use App\Model\Products\ClothesProduct;
+use App\Model\Products\TechProduct;
 use App\Model\Database;
 
 use Exception;

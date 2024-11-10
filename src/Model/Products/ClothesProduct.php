@@ -3,10 +3,10 @@
 /**
  * This class represents the clothes product type.
  * 
- * @package App\Model
+ * @package App\Model\Products
  */
 
-namespace App\Model;
+namespace App\Model\Products;
 
 use App\Controller\ProductsResolver;
 

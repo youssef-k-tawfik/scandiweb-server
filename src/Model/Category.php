@@ -12,6 +12,7 @@ namespace App\Model;
 use PDO;
 
 include __DIR__ . '/../../config.php';
+
 class Category
 {
     public $name;

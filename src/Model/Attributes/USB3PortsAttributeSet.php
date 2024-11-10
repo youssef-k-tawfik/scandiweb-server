@@ -3,10 +3,10 @@
 /**
  * This class represents the USB 3 ports attribute set.
  * 
- * @package App\Model
+ * @package App\Model\Attributes
  */
 
-namespace App\Model;
+namespace App\Model\Attributes;
 
 class USB3PortsAttributeSet extends AttributeSetType
 {

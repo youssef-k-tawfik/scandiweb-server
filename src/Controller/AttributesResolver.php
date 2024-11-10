@@ -9,11 +9,11 @@
 
 namespace App\Controller;
 
-use App\Model\SizeAttributeSet;
-use App\Model\ColorAttributeSet;
-use App\Model\CapacityAttributeSet;
-use App\Model\USB3PortsAttributeSet;
-use App\Model\TouchIDInKeyboardAttributeSet;
+use App\Model\Attributes\SizeAttributeSet;
+use App\Model\Attributes\ColorAttributeSet;
+use App\Model\Attributes\CapacityAttributeSet;
+use App\Model\Attributes\USB3PortsAttributeSet;
+use App\Model\Attributes\TouchIDInKeyboardAttributeSet;
 use Exception;
 
 class AttributesResolver
